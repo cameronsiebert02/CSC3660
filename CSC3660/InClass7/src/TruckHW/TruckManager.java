@@ -7,13 +7,18 @@ import java.util.ArrayList;
 
 public class TruckManager {
     public static void main(String[] args) {
-        String inFile = "TruckOrder.txt";
+        String inFile = "/Users/cameronsiebert/Documents/GitHub/CSC3660/CSC3660/InClass7/src/TruckHW/TruckOrder.txt";
         ArrayList<String> data = getFileData(inFile);
         showTrucks(data);
     }
 
     private static void showTrucks(ArrayList<String> data) {
+        boolean firstLine = true;
         for(String row : data){
+            if(firstLine){
+                firstLine = false;
+                continue;
+            }
             String[] toks = row.split(",");
             int truckID = Integer.parseInt(toks[0]);
             int zip = Integer.parseInt(toks[1]);
@@ -31,7 +36,6 @@ public class TruckManager {
             System.out.printf("\nException: %s", e.getMessage());
             System.exit(1);
         }
-        ArrayList<String> data = fio.getFileData();
-        return data;
+        return fio.getFileData();
     }
 }
