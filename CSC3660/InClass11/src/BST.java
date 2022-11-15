@@ -8,6 +8,29 @@ public class BST {
             inOrderTraversal(focusNode.rightChild);
         }
     }
+    public void preOrderTraversal(BSTNode focusNode){
+        if(focusNode != null){
+            // node -> traverse left -> traverse right
+            System.out.printf("\nNode: %s Name: %s", focusNode.key, focusNode.name);
+            preOrderTraversal(focusNode.leftChild);
+            preOrderTraversal(focusNode.rightChild);
+        }
+    }
+    public void postOrderTraversal(BSTNode focusNode){
+        if(focusNode != null){
+            // traverse left -> traverse right -> root
+            postOrderTraversal(focusNode.leftChild);
+            postOrderTraversal(focusNode.rightChild);
+            System.out.printf("\nNode: %s Name: %s", focusNode.key, focusNode.name);
+        }
+    }
+    public BSTNode smallestItem(BSTNode focusNode){
+        BSTNode theNode = focusNode;
+        if(focusNode.leftChild != null){
+            theNode = focusNode.leftChild;
+        }
+        return theNode;
+    }
     public BSTNode findNode(int key){
         // Return null or the node
         BSTNode focusNode = root;
