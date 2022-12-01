@@ -3,6 +3,7 @@ package FamilyTreeHW;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 
@@ -20,43 +21,56 @@ public class DriveAncestry {
         showAllPeople(treeEntries2);
         String name = "Jackie";
         System.out.printf("\n --- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name );
+        ShowDirectDescendants(name, ft);
         name = "Abbey";
         System.out.printf("\n ---Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        ShowDirectDescendants(name, ft);
         name = "Lisa";
         System.out.printf("\n ---- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        ShowDirectDescendants(name, ft);
 
         name = "Mona";
         System.out.printf("\n ---- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        ShowDirectDescendants(name, ft);
 
         name="Homer";
         System.out.printf("\n ---- Showing Siblings of %s", name);
-        ShowMySiblings( name);
+        ShowMySiblings(name, ft);
         name="Maggie";
         System.out.printf("\n ---- Showing Siblings of %s", name);
-        ShowMySiblings(name);
+        ShowMySiblings(name, ft);
 
         name="Clancy";
         System.out.printf("\n ---- Showing Siblings of %s", name);
-        ShowMySiblings(name);
+        ShowMySiblings(name, ft);
 
 //        showThisPersonsTree(treeEntries, "Marge");
 
 
     }
 
-    private static void ShowMySiblings(String person) {
+    private static void ShowMySiblings(String person, FamilyTree ft) {
          // ToDo:
         // Output all of the siblings of this person. That is someone who shares a mother or father
         // For example if Person is Marge you would show Marge, Patty and Selma
-
-
+        int ct = 0;
+        boolean firstParent = true;
+        for(String name : ft.tree.keySet()){
+            if (name.equalsIgnoreCase(person)){
+                for(Person p : ft.tree.get(name).getParent()){
+                    while(firstParent){
+                        for(Person c : ft.tree.get(p.name).getChildren()){
+                            ct++;
+                            System.out.printf("\nSibling #%s: %s", ct, c.toString());
+                            firstParent = false;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private static void ShowDirectDescendants(String ancestor) {
+    private static void ShowDirectDescendants(String ancestor, FamilyTree ft) {
         // ToDo: Write this method that shows the direct descendant
         // For example, if anester="Jackie" it would show:
         //    Jackie married to Clancy
@@ -65,6 +79,24 @@ public class DriveAncestry {
         //     Marge
         //       Bart
         //       Lisa
+        int ct = 0;
+        for (String name : ft.tree.keySet()) {
+            if (name.equalsIgnoreCase(ancestor)) {
+                if (ft.tree.get(name).getSpouse() != null) {
+                    System.out.printf("\nSpouse: %s", ft.tree.get(name).spouse.toString());
+                }
+                for (Person c : ft.tree.get(name).children) {
+                    ct++;
+                    System.out.printf("\nDecendant #%s: %s", ct, c.toString());
+                        if (c.children != null) {
+                            for (Person e : c.children) {
+                                ct++;
+                                System.out.printf("\nDecendant #%s: %s", ct, e.toString());
+                            }
+                        }
+                }
+            }
+        }
     }
 
     private static FamilyTree AddNewPerson(FamilyTree ft) {
@@ -73,7 +105,52 @@ public class DriveAncestry {
         //    Mom and Dad
         //    Spouse
         //   Add this person to the tree
+        Scanner scan = new Scanner(System.in);
+        String uName = "";
+        int uYear = 0;
+        String uMom = "";
+        String uDad = "";
+        String uSpouse = "";
+        System.out.printf("\n Please enter the information needed to add a person to the family tree:");
+        System.out.printf("\n(If they don't have the relation, just leave the space blank)");
+        System.out.printf("\nPerson name: ");
+        uName = scan.nextLine();
+        System.out.printf("\nBirth year: ");
+        uYear = scan.nextInt();
+        uMom = scan.nextLine();
+        System.out.printf("\nTheir mom: ");
+        uMom = scan.nextLine();
+        System.out.printf("\nTheir dad: ");
+        uDad = scan.nextLine();
+        System.out.printf("\nTheir spouse: ");
+        uSpouse = scan.nextLine();
 
+        Person uPerson = new Person(uName, uYear);
+        ft.addPerson(uName, uPerson);
+        if (!uMom.equals("")){
+            for(String name : ft.tree.keySet()){
+                if(uMom.equalsIgnoreCase(name)){
+                    ft.addParent(uName, ft.getThisPerson(name));
+                    ft.addChild(name, uPerson);
+                }
+            }
+        }
+        if (!uDad.equals("")){
+            for(String name : ft.tree.keySet()){
+                if(uDad.equalsIgnoreCase(name)){
+                    ft.addParent(uName, ft.getThisPerson(name));
+                    ft.addChild(name, uPerson);
+                }
+            }
+        }
+        if(!uSpouse.equals("")){
+            for(String name : ft.tree.keySet()){
+                if(uSpouse.equalsIgnoreCase(name)){
+                    uPerson.spouse = ft.getThisPerson(name);
+                    ft.getThisPerson(name).spouse = uPerson;
+                }
+            }
+        }
        return ft;
     }
 
@@ -168,9 +245,26 @@ public class DriveAncestry {
         ft.addParent("Patty", jackie);
         ft.addParent("Selma", clancy);
         ft.addParent("Selma", jackie);
+
+        // Add Homers parents
+        Person mona = new Person("Mona", 1962);
+        Person abe = new Person("Abe", 1963);
+        ft.addPerson("Mona", mona);
+        ft.addPerson("Abe", abe);
+        ft.addChild("Mona", homer);
+        ft.addChild("Abe", homer);
+        ft.addParent("Homer", abe);
+        ft.addParent("Homer", mona);
+
+        // Add Abe's other children
+        Person herb = new Person("Herbert", 1992);
+        Person abbey = new Person("Abbey", 1993);
+        ft.addChild("Abe", herb);
+        ft.addChild("Abe", abbey);
+        ft.addParent("Herbert", abe);
+        ft.addParent("Abbey", abe);
         return ft;
     }
 
 
 }
-
