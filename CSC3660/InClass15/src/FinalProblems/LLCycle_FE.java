@@ -21,20 +21,20 @@ public class LLCycle_FE {
          // For example, if the nodes had color name Red, Blue, Red you would
          // return a linked list of only Red and Blue
          Node currentNode = head;
-         Node index = null;
+         Node idx = null;
          Node temp = null;
          while(currentNode != null){
                  temp = currentNode;
-                 index = currentNode.next;
+                 idx = currentNode.next;
 
-                 while(index != null) {
-                     if(currentNode.color.equalsIgnoreCase(index.color)) {
-                         temp.next = index.next;
+                 while(idx != null) {
+                     if(currentNode.color.equalsIgnoreCase(idx.color)) {
+                         temp.next = idx.next;
                      }
                      else {
-                         temp = index;
+                         temp = idx;
                      }
-                     index = index.next;
+                     idx = idx.next;
                  }
                  currentNode = currentNode.next;
              }
